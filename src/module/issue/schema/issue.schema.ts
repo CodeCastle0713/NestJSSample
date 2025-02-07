@@ -1,8 +1,8 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
-import { StatusType } from '../enum/status.enum';
+import { IssueStatus } from '../enum/status.enum';
 
-@Schema()
+@Schema({ timestamps: true })
 export class Issue extends Document {
   @Prop({ required: true })
   title: string;
@@ -10,14 +10,17 @@ export class Issue extends Document {
   @Prop({ required: true })
   description: string;
 
-  @Prop({ required: true })
-  assignee: string[];
+  @Prop({ required: true, default: null })
+  assignee: string;
 
   @Prop({ required: true })
   creator: string;
 
-  @Prop({ required: true, enum: StatusType, default: StatusType.Open })
-  status: StatusType;
+  @Prop({ required: true, enum: IssueStatus, default: IssueStatus.Open })
+  status: IssueStatus;
+
+  createdAt: string;
+  updatedAt: string;
 }
 
 export const IssueSchema = SchemaFactory.createForClass(Issue);

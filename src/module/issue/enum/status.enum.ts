@@ -1,4 +1,4 @@
-export enum StatusType {
+export enum IssueStatus {
   Open = 'open',
   Closed = 'closed',
 }

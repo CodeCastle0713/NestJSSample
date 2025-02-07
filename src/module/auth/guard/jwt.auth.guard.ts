@@ -1,11 +1,12 @@
 import {
   CanActivate,
   ExecutionContext,
+  ForbiddenException,
   Injectable,
-  UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
+import { Message } from '../enum/message.enum';
 
 @Injectable()
 export class JwtAuthGuard implements CanActivate {
@@ -16,20 +17,22 @@ export class JwtAuthGuard implements CanActivate {
 
     const token = this.extractTokenFromHeader(request);
     if (!token) {
-      throw new UnauthorizedException();
+      throw new ForbiddenException({ message: Message.Unauthorized });
     }
 
     try {
       const { sub, role } = await this.jwtService.verifyAsync(token);
-      request.user = { userId: sub, userRole: role };
+      request.user = { id: sub, role };
     } catch {
-      throw new UnauthorizedException();
+      throw new ForbiddenException({ message: Message.Unauthorized });
     }
+
     return true;
   }
 
   private extractTokenFromHeader(request: Request) {
     const [type, token] = request.headers.authorization?.split(' ') ?? [];
+
     return type === 'Bearer' ? token : null;
   }
 }

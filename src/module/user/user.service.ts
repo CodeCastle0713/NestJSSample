@@ -1,53 +1,36 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { Model } from 'mongoose';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
+import { Model, RootFilterQuery, Types } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 
 import { User } from './schema/user.schema';
-import { RegisterUserDto, UpdateUserDto } from './dto/user.dto';
+import { UserCreateDto } from './dto/user.create.dto';
+import { Message } from './enum/message.enum';
 
 @Injectable()
 export class UserService {
   constructor(@InjectModel(User.name) private userModel: Model<User>) {}
 
-  async find(email: string) {
-    const existingUser = await this.userModel.findOne({ email }).exec();
-    return existingUser;
+  save(body: UserCreateDto) {
+    return new this.userModel(body).save();
   }
 
-  async add(registerUserDto: RegisterUserDto) {
-    return await new this.userModel(registerUserDto).save();
+  find(filter?: RootFilterQuery<User>) {
+    return filter ? this.userModel.find(filter) : this.userModel.find();
   }
 
-  async findAll(): Promise<User[] | null> {
-    const allUser = await this.userModel.find().exec();
-    return allUser;
-  }
-
-  async findById(id: string) {
-    const specificUser = await this.userModel.findById(id).exec();
-    return specificUser;
-  }
-
-  async updateById(id: string, body: UpdateUserDto) {
-    const updatedUser = await this.userModel.findByIdAndUpdate(
-      id,
-      { $set: body },
-      { new: true },
-    );
-
-    if (!updatedUser) {
-      throw new NotFoundException({ message: `User with ID ${id} not found` });
+  findById(id: string) {
+    if (!Types.ObjectId.isValid(id)) {
+      throw new NotFoundException({ message: Message.NoUser });
     }
 
-    return updatedUser;
+    return this.userModel.findById(id);
   }
-  async deleteById(id: number) {
-    const deletedUser = await this.userModel.findByIdAndDelete({ _id: id });
 
-    if (!deletedUser) {
-      throw new NotFoundException({ message: `User with ID ${id} not found` });
-    }
-
-    return deletedUser;
+  findByEmail(email: string) {
+    return this.userModel.findOne({ email });
   }
 }

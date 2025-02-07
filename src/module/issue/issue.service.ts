@@ -1,30 +1,32 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 
 import { Issue } from './schema/issue.schema';
-import { StatusType } from './enum/status.enum';
+import { IssueStatus } from './enum/status.enum';
+import { Message } from './enum/message.enum';
 
 @Injectable()
 export class IssueService {
   constructor(@InjectModel(Issue.name) private issueModel: Model<Issue>) {}
 
-  async add(createData: any) {
-    const newIssue = new this.issueModel(createData);
-    return newIssue.save();
+  save(createData: any) {
+    return new this.issueModel(createData).save();
   }
 
-  async findAll() {
-    const allIssue = await this.issueModel.find().exec();
-    return allIssue;
+  find() {
+    return this.issueModel.find();
   }
 
-  async findById(id: string) {
-    const specificIssue = await this.issueModel.findById(id).exec();
-    return specificIssue;
+  findById(id: string) {
+    if (!Types.ObjectId.isValid(id)) {
+      throw new NotFoundException({ message: Message.NoIssue });
+    }
+
+    return this.issueModel.findById(id);
   }
 
-  async updateStatus(id: string, status: StatusType) {
+  async updateStatus(id: string, status: IssueStatus) {
     const updatedIssue = await this.issueModel.findByIdAndUpdate(
       id,
       {
@@ -35,19 +37,6 @@ export class IssueService {
       { new: true },
     );
 
-    if (!updatedIssue) {
-      throw new NotFoundException({ message: `User with ID ${id} not found` });
-    }
-
     return updatedIssue;
-  }
-  async deleteById(id: number) {
-    const deletedIssue = await this.issueModel.findByIdAndDelete({ _id: id });
-
-    if (!deletedIssue) {
-      throw new NotFoundException({ message: `User with ID ${id} not found` });
-    }
-
-    return deletedIssue;
   }
 }

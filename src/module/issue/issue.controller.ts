@@ -8,13 +8,16 @@ import {
   UseGuards,
   Request,
   Patch,
+  NotFoundException,
+  Put,
 } from '@nestjs/common';
 
 import { IssueService } from './issue.service';
-import { CreateIssueDto } from './dto/issue.dto';
-import { Issue } from './schema/issue.schema';
-import { JwtAuthGuard } from '../auth/guard/auth.guard';
-import { StatusType } from './enum/status.enum';
+import { IssueCreateDto } from './dto/issue.create.dto';
+import { JwtAuthGuard } from '../auth/guard/jwt.auth.guard';
+import { IssueStatus } from './enum/status.enum';
+import { Message } from './enum/message.enum';
+import { IssueUpdateDto } from './dto/issue.update.dto';
 
 @UseGuards(JwtAuthGuard)
 @Controller('api/issue')
@@ -22,33 +25,85 @@ export class IssueController {
   constructor(private issueService: IssueService) {}
 
   @Post()
-  async create(@Body() body: CreateIssueDto, @Request() req) {
-    const { userId } = req.user;
-    return await this.issueService.add({ ...body, creator: userId });
+  async create(@Body() body: IssueCreateDto, @Request() req) {
+    const { id } = req.user;
+    await this.issueService.save({ ...body, creator: id });
+
+    return {
+      message: Message.SuccessCreate,
+    };
   }
 
   @Get()
-  async list(): Promise<Issue[] | null> {
-    return await this.issueService.findAll();
+  async list() {
+    const issues = await this.issueService.find();
+
+    if (!issues) {
+      throw new NotFoundException({ message: Message.NoIssue });
+    }
+
+    return issues;
   }
 
   @Get(':id')
-  retrieve(@Param() param: any) {
-    return this.issueService.findById(param.id);
+  async retrieve(@Param() { id }) {
+    const issue = await this.issueService.findById(id);
+
+    if (!issue) {
+      throw new NotFoundException({ message: Message.NoIssue });
+    }
+
+    return issue;
   }
 
-  @Patch(':id/closeStatus')
-  updateStatusToClose(@Param() param: any) {
-    return this.issueService.updateStatus(param.id, StatusType.Closed);
+  @Put(':id')
+  async update(@Param() { id }, @Body() payload: IssueUpdateDto) {
+    const issue = await this.issueService.findById(id);
+    if (!issue) {
+      throw new NotFoundException({ message: Message.NoIssue });
+    }
+
+    await issue.updateOne({ $set: payload });
+
+    return {
+      message: Message.SuccessUpdate,
+    };
   }
 
-  @Patch(':id/openStatus')
-  updateStatusToOpen(@Param() param: any) {
-    return this.issueService.updateStatus(param.id, StatusType.Open);
+  @Patch(':id/close')
+  async updateStatusToClose(@Param() { id }) {
+    const issue = await this.issueService.findById(id);
+
+    if (!issue) {
+      throw new NotFoundException({ message: Message.NoIssue });
+    }
+
+    return this.issueService.updateStatus(id, IssueStatus.Closed);
+  }
+
+  @Patch(':id/open')
+  async updateStatusToOpen(@Param() { id }) {
+    const issue = await this.issueService.findById(id);
+
+    if (!issue) {
+      throw new NotFoundException({ message: Message.NoIssue });
+    }
+
+    return this.issueService.updateStatus(id, IssueStatus.Open);
   }
 
   @Delete(':id')
-  delete(@Param() param: any) {
-    return this.issueService.deleteById(param.id);
+  async delete(@Param() { id }) {
+    const issue = await this.issueService.findById(id);
+
+    if (!issue) {
+      throw new NotFoundException({ message: Message.NoIssue });
+    }
+
+    await issue.deleteOne();
+
+    return {
+      message: Message.SuccessDelete,
+    };
   }
 }
