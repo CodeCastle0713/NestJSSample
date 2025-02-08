@@ -1,4 +1,4 @@
-import { Module, UseFilters } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { Connection } from 'mongoose';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
@@ -6,6 +6,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
 import { IssueModule } from './issue/issue.module';
+import { ProfileModule } from './profile/profile.module';
 import configuration from 'src/config/configuration';
 
 @Module({
@@ -42,6 +43,7 @@ import configuration from 'src/config/configuration';
     AuthModule,
     UserModule,
     IssueModule,
+    ProfileModule,
   ],
 })
 export class AppModule {}

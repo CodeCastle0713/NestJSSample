@@ -5,11 +5,11 @@ import { compare, genSaltSync, hashSync } from 'bcrypt';
 
 @Schema({
   timestamps: true,
-  versionKey: false,
+  virtuals: true,
 })
 export class User extends Document {
   @Prop({ required: true })
-  username: string;
+  fullname: string;
 
   @Prop({ required: true, unique: true })
   email: string;

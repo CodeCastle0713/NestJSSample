@@ -7,7 +7,6 @@ import {
   Put,
   Body,
   UseGuards,
-  Request,
   NotFoundException,
   UnprocessableEntityException,
 } from '@nestjs/common';
@@ -22,13 +21,13 @@ import { RolesGuard } from '../auth/guard/role.guard';
 import { Message } from './enum/message.enum';
 
 @UseGuards(JwtAuthGuard, RolesGuard)
+@Roles(UserRole.Admin)
 @Controller('api/user')
 export class UserController {
   private propsToSelect = '-password';
 
   constructor(private userService: UserService) {}
 
-  @Roles(UserRole.Admin)
   @Post()
   async create(@Body() body: UserCreateDto) {
     const user = await this.userService
@@ -47,19 +46,14 @@ export class UserController {
   }
 
   @Get()
-  async list(@Request() req) {
-    const { id, role } = req.user;
+  async list() {
+    const users = await this.userService.find().select(this.propsToSelect);
 
-    const data =
-      role === UserRole.Admin
-        ? await this.userService.find().select(this.propsToSelect)
-        : await this.userService.findById(id).select(this.propsToSelect);
-
-    if (!data) {
+    if (!users) {
       throw new NotFoundException({ message: Message.NoUser });
     }
 
-    return data;
+    return users;
   }
 
   @Get(':id')
@@ -88,7 +82,6 @@ export class UserController {
     };
   }
 
-  @Roles(UserRole.Admin)
   @Delete(':id')
   async delete(@Param() { id }) {
     const user = await this.userService.findById(id);

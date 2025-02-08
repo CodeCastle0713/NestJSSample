@@ -5,7 +5,7 @@ const MIN_PASSWORD_LENGTH = 6;
 
 export class UserRegisterDto {
   @IsNotEmpty({ message: Message.RequireEmail })
-  username: string;
+  fullname: string;
 
   @IsEmail({}, { message: Message.InvalidEmailFormat })
   @IsNotEmpty({ message: Message.RequireEmail })

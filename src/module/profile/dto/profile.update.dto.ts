@@ -15,5 +15,5 @@ export class UserUpdateDto {
   password: string;
 
   @IsOptional()
-  fullname: string;
+  username: string;
 }

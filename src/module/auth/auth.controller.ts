@@ -2,15 +2,17 @@ import {
   Controller,
   Post,
   Body,
-  UnauthorizedException,
   UnprocessableEntityException,
+  UseGuards,
+  Request,
 } from '@nestjs/common';
 
 import { AuthService } from './auth.service';
-import { UserRegisterDto } from './dto/user.register.dto';
-import { UserLoginDto } from './dto/user.login.dto';
-import { Message } from './enum/message.enum';
 import { UserService } from '../user/user.service';
+import { UserLoginDto } from './dto/user.login.dto';
+import { UserRegisterDto } from './dto/user.register.dto';
+import { Message } from './enum/message.enum';
+import { LocalAuthGuard } from './guard/local.auth.guard';
 
 @Controller('api/auth')
 export class AuthController {
@@ -22,32 +24,16 @@ export class AuthController {
   @Post('/register')
   async register(@Body() body: UserRegisterDto) {
     const user = await this.userService.findByEmail(body.email);
-
-    if (user) {
-      throw new UnprocessableEntityException({
-        message: Message.ExistingUser,
-      });
-    }
+    if (user)
+      throw new UnprocessableEntityException({ message: Message.ExistingUser });
 
     await this.userService.save(body);
-
-    return {
-      message: Message.SuccessRegister,
-    };
+    return { message: Message.SuccessRegister };
   }
 
+  @UseGuards(LocalAuthGuard)
   @Post('/login')
-  async login(@Body() body: UserLoginDto) {
-    const user = await this.userService.findByEmail(body.email);
-
-    if (!user || !(await user.comparePassword(body.password))) {
-      throw new UnauthorizedException({
-        message: Message.InvalidCredential,
-      });
-    }
-
-    const accessToken = this.authService.signPayload(user);
-
-    return { accessToken };
+  async login(@Request() req) {
+    return this.authService.login(req.user);
   }
 }

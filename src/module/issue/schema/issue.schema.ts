@@ -2,7 +2,10 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 import { IssueStatus } from '../enum/status.enum';
 
-@Schema({ timestamps: true })
+@Schema({
+  timestamps: true,
+  virtuals: true,
+})
 export class Issue extends Document {
   @Prop({ required: true })
   title: string;
@@ -10,7 +13,7 @@ export class Issue extends Document {
   @Prop({ required: true })
   description: string;
 
-  @Prop({ required: true, default: null })
+  @Prop({ required: false, default: null })
   assignee: string;
 
   @Prop({ required: true })
