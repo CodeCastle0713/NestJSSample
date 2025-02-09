@@ -1,7 +1,8 @@
 import { NestFactory } from '@nestjs/core';
-import { AppModule } from './module/app.module';
 import { UnprocessableEntityException, ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+
+import { AppModule } from './module/app.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -24,7 +25,7 @@ async function bootstrap() {
       },
     }),
   );
-  const PORT = configService.get<number>('port') || 8000;
+  const PORT = configService.get('port');
   await app.listen(PORT);
 }
 bootstrap();

@@ -32,6 +32,16 @@ UserSchema.pre<User>('save', function () {
   this.password = hashSync(this.password, genSaltSync(10));
 });
 
+UserSchema.pre('updateOne', function () {
+  const update = this.getUpdate() as Record<string, any>;
+
+  if (update.password) {
+    update.password = hashSync(update.password, genSaltSync(10));
+  } else if (update.$set && update.$set.password) {
+    update.$set.password = hashSync(update.$set.password, genSaltSync(10));
+  }
+});
+
 UserSchema.methods.comparePassword = function (candidatePassword: string) {
   return compare(candidatePassword, this.password);
 };
