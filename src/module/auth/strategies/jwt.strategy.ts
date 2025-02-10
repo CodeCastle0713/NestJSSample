@@ -8,20 +8,18 @@ import { Message } from '../enum/message.enum';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
+  private propsToSelect = '-password';
+
   constructor(
     private userService: UserService,
     configService: ConfigService,
   ) {
-    const jwtSecret = configService.get('jwt.secret');
-
-    if (!jwtSecret) {
-      throw new Error('JWT Secret is not defined in the environment variables');
-    }
+    const { secret } = configService.get('jwt');
 
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
-      secretOrKey: jwtSecret,
+      secretOrKey: secret,
     });
   }
 
@@ -29,7 +27,7 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
   async validate(payload: any) {
     const user = await this.userService
       .findById(payload.sub)
-      .select('-password');
+      .select(this.propsToSelect);
 
     if (!user) {
       throw new UnauthorizedException({ message: Message.NoUser });

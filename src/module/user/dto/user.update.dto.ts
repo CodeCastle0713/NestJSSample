@@ -16,4 +16,7 @@ export class UserUpdateDto {
 
   @IsOptional()
   fullname: string;
+
+  @IsOptional()
+  role: string;
 }

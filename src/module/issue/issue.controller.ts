@@ -18,7 +18,6 @@ import { JwtAuthGuard } from '../auth/guard/jwt.auth.guard';
 import { IssueStatus } from './enum/status.enum';
 import { Message } from './enum/message.enum';
 import { IssueUpdateDto } from './dto/issue.update.dto';
-import { User } from '../user/decorator/user.decorator';
 
 @UseGuards(JwtAuthGuard)
 @Controller('api/issue')
@@ -26,7 +25,9 @@ export class IssueController {
   constructor(private issueService: IssueService) {}
 
   @Post()
-  async create(@Body() body: IssueCreateDto, @User('id') id: string) {
+  async create(@Body() body: IssueCreateDto, @Request() req) {
+    const { id } = req.user;
+
     await this.issueService.save({ ...body, creator: id });
 
     return {
