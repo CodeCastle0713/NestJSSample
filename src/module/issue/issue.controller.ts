@@ -6,7 +6,7 @@ import {
   Post,
   Body,
   UseGuards,
-  Request,
+  Req,
   Patch,
   NotFoundException,
   Put,
@@ -18,6 +18,7 @@ import { JwtAuthGuard } from '../auth/guard/jwt.auth.guard';
 import { IssueStatus } from './enum/status.enum';
 import { Message } from './enum/message.enum';
 import { IssueUpdateDto } from './dto/issue.update.dto';
+import { UserRequest } from '../user/interface/user.request';
 
 @UseGuards(JwtAuthGuard)
 @Controller('api/issue')
@@ -25,10 +26,8 @@ export class IssueController {
   constructor(private issueService: IssueService) {}
 
   @Post()
-  async create(@Body() body: IssueCreateDto, @Request() req) {
-    const { id } = req.user;
-
-    await this.issueService.save({ ...body, creator: id });
+  async create(@Body() body: IssueCreateDto, @Req() { user }: UserRequest) {
+    await this.issueService.save({ ...body, creator: user.id });
 
     return {
       message: Message.SuccessCreate,

@@ -17,8 +17,8 @@ import configuration from 'src/config/configuration';
     }),
     MongooseModule.forRootAsync({
       inject: [ConfigService],
-      async useFactory(configService: ConfigService) {
-        const uri = configService.get<string>('database.uri');
+      useFactory(configService: ConfigService) {
+        const { uri } = configService.get('database');
 
         function onConnectionCreate(connection: Connection) {
           connection.on('connected', () => console.log('DB is connected'));

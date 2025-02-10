@@ -18,6 +18,5 @@ import { UserModule } from '../user/user.module';
   ],
   controllers: [IssueController],
   providers: [IssueService],
-  exports: [IssueService],
 })
 export class IssueModule {}

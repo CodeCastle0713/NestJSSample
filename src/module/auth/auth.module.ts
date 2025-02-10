@@ -7,10 +7,10 @@ import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { UserModule } from '../user/user.module';
 
-import { JwtStrategy } from './strategies/jwt.strategy';
+import { JwtStrategy } from './strategy/jwt.strategy';
 import { JwtAuthGuard } from './guard/jwt.auth.guard';
 import { LocalAuthGuard } from './guard/local.auth.guard';
-import { LocalStrategy } from './strategies/local.strategy';
+import { LocalStrategy } from './strategy/local.strategy';
 @Module({
   imports: [
     PassportModule,

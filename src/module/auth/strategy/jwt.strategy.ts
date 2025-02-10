@@ -23,7 +23,7 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
     });
   }
 
-  //Called by @UseGuard(JwtAuthGuard)
+  // Called by @UseGuard(JwtAuthGuard)
   async validate(payload: any) {
     const user = await this.userService
       .findById(payload.sub)
@@ -33,6 +33,6 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
       throw new UnauthorizedException({ message: Message.NoUser });
     }
 
-    return user; // This will be attached to `req.user`
+    return user; // Attached to `req.user`
   }
 }

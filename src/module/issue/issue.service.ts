@@ -5,12 +5,13 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Issue } from './schema/issue.schema';
 import { IssueStatus } from './enum/status.enum';
 import { Message } from './enum/message.enum';
+import { IssueCreateDto } from './dto/issue.create.dto';
 
 @Injectable()
 export class IssueService {
   constructor(@InjectModel(Issue.name) private issueModel: Model<Issue>) {}
 
-  save(createData: any) {
+  save(createData: IssueCreateDto) {
     return new this.issueModel(createData).save();
   }
 

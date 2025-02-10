@@ -10,4 +10,8 @@ export class IssueCreateDto {
 
   @IsOptional()
   assignee: string;
+
+  // !!It's not the payload from the frontend.
+  @IsOptional()
+  creator: string;
 }
