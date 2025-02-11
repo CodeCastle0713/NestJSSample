@@ -18,7 +18,7 @@ import { UserRequest } from '../user/interface/user.request';
 export class AuthController {
   constructor(
     private authService: AuthService,
-    private userService: UserService,
+    private userService: UserService
   ) {}
 
   @Post('/register')
@@ -33,7 +33,7 @@ export class AuthController {
 
   @UseGuards(LocalAuthGuard)
   @Post('/login')
-  async login(@Req() { user }: UserRequest) {
+  login(@Req() { user }: UserRequest) {
     return this.authService.login(user);
   }
 }

@@ -24,13 +24,12 @@ import configuration from 'src/config/configuration';
           connection.on('connected', () => console.log('DB is connected'));
           connection.on('open', () => console.log('DB is opened'));
           connection.on('disconnected', () =>
-            console.log('DB is disconnected'),
+            console.log('DB is disconnected')
           );
           connection.on('reconnected', () => console.log('DB is reconnected'));
           connection.on('disconnecting', () =>
-            console.log('DB is disconnecting'),
+            console.log('DB is disconnecting')
           );
-
           return connection;
         }
 

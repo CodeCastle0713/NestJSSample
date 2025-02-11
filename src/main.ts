@@ -3,6 +3,7 @@ import { UnprocessableEntityException, ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 
 import { AppModule } from './module/app.module';
+import { ValidationError } from 'class-validator';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -13,10 +14,10 @@ async function bootstrap() {
       whitelist: true,
       forbidNonWhitelisted: true,
       transform: true,
-      exceptionFactory: (errors: any) => {
-        const formattedErrors = errors.map((error) => ({
+      exceptionFactory: (errors: ValidationError[]) => {
+        const formattedErrors = errors.map((error: ValidationError) => ({
           field: error.property,
-          message: Object.values(error.constraints),
+          message: Object.values(error.constraints || {}),
         }));
 
         formattedErrors.forEach((error) => {

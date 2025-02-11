@@ -5,6 +5,7 @@ import { ExtractJwt, Strategy } from 'passport-jwt';
 import { UserService } from 'src/module/user/user.service';
 import { ConfigService } from '@nestjs/config';
 import { Message } from '../enum/message.enum';
+import { JwtPayloadInterface } from '../interface/jwt.payload.interface';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
@@ -12,7 +13,7 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
 
   constructor(
     private userService: UserService,
-    configService: ConfigService,
+    configService: ConfigService
   ) {
     const { secret } = configService.get('jwt');
 
@@ -24,7 +25,7 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
   }
 
   // Called by @UseGuard(JwtAuthGuard)
-  async validate(payload: any) {
+  async validate(payload: JwtPayloadInterface) {
     const user = await this.userService
       .findById(payload.sub)
       .select(this.propsToSelect);

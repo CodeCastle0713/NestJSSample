@@ -17,7 +17,7 @@ import { UserRequest } from '../user/interface/user.request';
 @UseGuards(JwtAuthGuard)
 export class ProfileController {
   @Get()
-  async retrieve(@Req() { user }: UserRequest) {
+  retrieve(@Req() { user }: UserRequest) {
     return user;
   }
 
