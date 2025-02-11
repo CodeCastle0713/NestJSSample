@@ -1,24 +1,25 @@
 import {
+  Body,
   Controller,
-  Param,
   Delete,
   Get,
-  Post,
-  Body,
-  UseGuards,
-  Req,
-  Patch,
   NotFoundException,
+  Param,
+  Patch,
+  Post,
   Put,
+  Req,
+  UseGuards,
 } from '@nestjs/common';
 
-import { IssueService } from './issue.service';
-import { IssueCreateDto } from './dto/issue.create.dto';
 import { JwtAuthGuard } from '../auth/guard/jwt.auth.guard';
-import { IssueStatus } from './enum/status.enum';
-import { Message } from './enum/message.enum';
-import { IssueUpdateDto } from './dto/issue.update.dto';
 import { UserRequest } from '../user/interface/user.request';
+
+import { IssueCreateDto } from './dto/issue.create.dto';
+import { IssueUpdateDto } from './dto/issue.update.dto';
+import { Message } from './enum/message.enum';
+import { IssueStatus } from './enum/status.enum';
+import { IssueService } from './issue.service';
 
 @UseGuards(JwtAuthGuard)
 @Controller('api/issue')

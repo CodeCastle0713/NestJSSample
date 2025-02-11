@@ -1,24 +1,25 @@
 import {
+  Body,
   Controller,
-  Param,
   Delete,
   Get,
+  NotFoundException,
+  Param,
   Post,
   Put,
-  Body,
-  UseGuards,
-  NotFoundException,
   UnprocessableEntityException,
+  UseGuards,
 } from '@nestjs/common';
 
-import { UserService } from './user.service';
-import { UserCreateDto } from './dto/user.create.dto';
-import { UserUpdateDto } from './dto/user.update.dto';
-import { JwtAuthGuard } from '../auth/guard/jwt.auth.guard';
-import { RolesGuard } from '../auth/guard/role.guard';
 import { Roles } from '../auth/decorator/role.decorator';
 import { UserRole } from '../auth/enum/role.enum';
+import { JwtAuthGuard } from '../auth/guard/jwt.auth.guard';
+import { RolesGuard } from '../auth/guard/role.guard';
+
+import { UserCreateDto } from './dto/user.create.dto';
+import { UserUpdateDto } from './dto/user.update.dto';
 import { Message } from './enum/message.enum';
+import { UserService } from './user.service';
 
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Roles(UserRole.Admin)

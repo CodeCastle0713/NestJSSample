@@ -1,4 +1,5 @@
 import { IsEmail, IsNotEmpty, MinLength } from 'class-validator';
+
 import { Message } from '../enum/message.enum';
 
 const MIN_PASSWORD_LENGTH = 6;

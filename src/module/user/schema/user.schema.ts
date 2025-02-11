@@ -1,7 +1,9 @@
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
-import { UserRole } from '../../auth/enum/role.enum';
 import { compare, genSaltSync, hashSync } from 'bcrypt';
+import { Document, UpdateQuery } from 'mongoose';
+
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+
+import { UserRole } from '../../auth/enum/role.enum';
 
 @Schema({
   timestamps: true,
@@ -33,7 +35,7 @@ UserSchema.pre<User>('save', function () {
 });
 
 UserSchema.pre('updateOne', function () {
-  const update = this.getUpdate() as Record<string, any>;
+  const update = this.getUpdate() as UpdateQuery<User>;
 
   if (update.password) {
     update.password = hashSync(update.password, genSaltSync(10));

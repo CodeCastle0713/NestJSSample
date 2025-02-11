@@ -1,4 +1,5 @@
 import { IsNotEmpty, IsOptional } from 'class-validator';
+
 import { Message } from '../enum/message.enum';
 
 export class IssueCreateDto {

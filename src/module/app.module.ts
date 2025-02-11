@@ -1,13 +1,15 @@
-import { Module } from '@nestjs/common';
+
 import { Connection } from 'mongoose';
+import configuration from 'src/config/configuration';
+
+import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 
-import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
 import { IssueModule } from './issue/issue.module';
 import { ProfileModule } from './profile/profile.module';
-import configuration from 'src/config/configuration';
+import { UserModule } from './user/user.module';
 
 @Module({
   imports: [

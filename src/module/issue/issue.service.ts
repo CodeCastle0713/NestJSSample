@@ -1,11 +1,13 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+
 import { Model, Types } from 'mongoose';
+
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 
-import { Issue } from './schema/issue.schema';
-import { IssueStatus } from './enum/status.enum';
-import { Message } from './enum/message.enum';
 import { IssueCreateDto } from './dto/issue.create.dto';
+import { Message } from './enum/message.enum';
+import { IssueStatus } from './enum/status.enum';
+import { Issue } from './schema/issue.schema';
 
 @Injectable()
 export class IssueService {

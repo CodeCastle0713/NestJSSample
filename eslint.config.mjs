@@ -1,7 +1,10 @@
+// @ts-nocheck
 import eslint from '@eslint/js';
 import eslintPluginPrettierRecommended from 'eslint-plugin-prettier/recommended';
 import globals from 'globals';
 import tseslint from 'typescript-eslint';
+import simpleImportSort from 'eslint-plugin-simple-import-sort';
+import importPlugin from 'eslint-plugin-import';
 
 export default tseslint.config(
   {
@@ -12,6 +15,10 @@ export default tseslint.config(
   ...tseslint.configs.stylistic,
   eslintPluginPrettierRecommended,
   {
+    plugins: {
+      'simple-import-sort': simpleImportSort,
+      'import': importPlugin,
+    },
     languageOptions: {
       globals: {
         ...globals.node,
@@ -28,12 +35,32 @@ export default tseslint.config(
   },
   {
     rules: {
+      // Import sorting rules
+      'simple-import-sort/imports': ['error', {
+        groups: [
+          // Built-in modules
+          ['^node:', '^@?\\w'],
+          // External packages
+          ['^@nestjs', '^@?\\w'],
+          // Internal modules
+          ['^@/'],
+          // Parent imports
+          ['^\\.\\.(?!/?$)', '^\\.\\./?$'],
+          // Other relative imports
+          ['^\\./(?=.*/)(?!/?$)', '^\\.(?!/?$)', '^\\./?$'],
+        ],
+      }],
+      'simple-import-sort/exports': 'error',
+      'import/first': 'error',
+      'import/newline-after-import': 'error',
+      'import/no-duplicates': 'error',
+
       // TypeScript specific rules
       '@typescript-eslint/no-unsafe-argument': 'off',
       '@typescript-eslint/no-unsafe-assignment': 'off',
       '@typescript-eslint/no-unsafe-member-access': 'off',
       '@typescript-eslint/no-unsafe-call': 'off',
-      '@typescript-eslint/no-explicit-any': 'off',
+      '@typescript-eslint/no-explicit-any': 'error',
       '@typescript-eslint/no-floating-promises': 'off',
       '@typescript-eslint/await-thenable': 'error',
       '@typescript-eslint/no-unused-vars': ['error', {
@@ -67,8 +94,8 @@ export default tseslint.config(
       'max-classes-per-file': ['error', 1],
       'class-methods-use-this': 'off',
 
-      // Prettier integration (disable conflicting rules)
-      'prettier/prettier': 'off'
+      // Prettier integration
+      'prettier/prettier': 'off',
     },
   },
 );

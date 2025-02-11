@@ -1,17 +1,18 @@
 import {
+  Body,
   Controller,
+  Delete,
   Get,
+  Put,
   Req,
   UseGuards,
-  Body,
-  Put,
-  Delete,
 } from '@nestjs/common';
 
 import { JwtAuthGuard } from '../auth/guard/jwt.auth.guard';
+import { UserRequest } from '../user/interface/user.request';
+
 import { ProfileUpdateDto } from './dto/profile.update.dto';
 import { Message } from './enum/message.enum';
-import { UserRequest } from '../user/interface/user.request';
 
 @Controller('api/profile')
 @UseGuards(JwtAuthGuard)
@@ -24,7 +25,7 @@ export class ProfileController {
   @Put()
   async update(
     @Body() payload: ProfileUpdateDto,
-    @Req() { user }: UserRequest,
+    @Req() { user }: UserRequest
   ) {
     await user.updateOne({ $set: payload });
 
